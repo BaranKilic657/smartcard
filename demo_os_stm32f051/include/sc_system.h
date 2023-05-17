@@ -23,7 +23,6 @@
 
 /* System definitions for the Smartcard V3 Hardware (STM32F051) */
 #if defined(SMARTCARD_HW_V3)
-// #pragma message ("Building for Board SMARTCARD_HW_V3_0")
 
 #define PORT_LED_R   GPIOA
 #define PORT_LED_G   GPIOA
