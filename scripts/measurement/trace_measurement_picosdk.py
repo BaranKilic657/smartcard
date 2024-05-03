@@ -24,8 +24,23 @@ import ctypes
 
 ###################################################################################################
 # configuration start
-n_traces  =   200  # number of traces to capture
+n_traces  = 200    # number of traces to capture
 n_samples = 62500  # number of samples per trace (before falling trigger edge)
+
+
+# Protection Mode encoded in P1 field
+# Select between:
+# REFERENCE             :
+# DUMMYOPS              :
+# SHUFFLE_BIASED        :
+# SHUFFLE               :
+# SHUFFLE_DUMMYOPS      :
+# MASK                  :
+# MASK_BIASED           :
+# MASK_DUMMYOPS         :
+# MASK_SHUFFLE_DUMMYOPS :
+# UNPROTECTED           :
+protect_mode = "REFERENCE"
 
 # sample_rate = "F_125_MHZ"  # sample rate [S/sec]
 sample_rate = "F_250_MHZ"  # sample rate [S/sec]
@@ -114,6 +129,20 @@ def progressbar(iterable, prefix="", size=100):
 class SmartCard:
     def connect(self):
         # detect the smart card based on the content of the ATR (card-centric approach)
+        protect_mode_dict = {
+            "REFERENCE": 0,
+            "DUMMYOPS": 1,
+            "SHUFFLE_BIASED": 2,
+            "SHUFFLE": 3,
+            "SHUFFLE_DUMMYOPS": 4,
+            "MASK": 5,
+            "MASK_BIASED": 6,
+            "MASK_DUMMYOPS": 7,
+            "MASK_SHUFFLE_DUMMYOPS": 8,
+            "UNPROTECTED": 9,
+        }
+        self.countermeasure = protect_mode_dict[protect_mode]
+
         logger.info("Initializing card connection...")
         try:
             cardtype = ATRCardType(toBytes("3B 90 11 00"))
@@ -128,7 +157,7 @@ class SmartCard:
 
     def decrypt(self, key):
         # format the command to be sent to the card:
-        DECRYPT_KEY = [0x88, 0x10, 0, 0, len(key)] + key + [0x10]
+        DECRYPT_KEY  = [0x88, 0x10, int(self.countermeasure), 0, len(key)] + key
         GET_RESPONSE = [0x88, 0xC0, 0x00, 0x00, 0x10]
         # send the commands and retrieve the responses
         # detecting a transmission error
