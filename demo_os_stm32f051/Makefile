@@ -31,8 +31,8 @@ CSTD       = -std=c99
 
 DEVICE       = stm32f051k8b6
 # LDSCRIPT   = stm32f051k8b6 use device OR ldscript
-OPENCM3_LIB  = opencm3_stm32f1
-OPENCM3_DEFS = -DSTM32F1 -D$(SMARTCARD_HW)
+OPENCM3_LIB  = opencm3_stm32f0
+OPENCM3_DEFS = -DSTM32F0 -D$(SMARTCARD_HW)
 ARCH_FLAGS   =
 FP_FLAGS     = -msoft-float
 ARCH_FLAGS   = -mthumb -mcpu=cortex-m3 $(FP_FLAGS)
