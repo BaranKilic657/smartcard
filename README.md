@@ -49,4 +49,13 @@ $ make TARGETS=stm32/f0
 Lastly, you can use the Makefile in `demo_os_stm32f051` to build the demo program.
 For flashing use either one of the flash scripts in the `scripts` directory.
 
+**Important Notice:**  
+If you are working on the student lab PCs, you should not use the system's openocd version,
+but the one provided by the SEC nas. In order to enable this config, execute the following
+on every fresh terminal you want to use openOCD on.
+
+```
+module use /nas/ei/sec/tools/modulefiles
+module load openocd/latest
+```
 
