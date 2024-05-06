@@ -55,7 +55,7 @@ but the one provided by the SEC nas. In order to enable this config, execute the
 on every fresh terminal you want to use openOCD on.
 
 ```
-module use /nas/ei/sec/tools/modulefiles
+module use /nas/sec/tools/modulefiles
 module load openocd/latest
 ```
 
