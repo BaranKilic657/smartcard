@@ -3,7 +3,6 @@
 ## Resources for the Lab
 * For all documentation, such as the lab script, datasheets, reference manuals, reference implementations, please
   visit the course's moodle page.
-* A template for your lab protocol can be found here: [here](./templates/benchmarks_template.md)
 * A template for the benchmark results can be found here: [here](./templates/lab_report_template.md)
 
 ## Useful (external) resources
@@ -55,7 +54,7 @@ but the one provided by the SEC nas. In order to enable this config, execute the
 on every fresh terminal you want to use openOCD on.
 
 ```
-module use /nas/sec/tools/modulefiles
+module use /nas/ei/share/sec/tools/modulefiles
 module load openocd/latest
 ```
 

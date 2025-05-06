@@ -10,7 +10,7 @@ order to decrypt the stream with the help of a connected smart card.
 
 The port cotains your group number plus a offset of 20000.
 E.g: for group number 42 the following code should be executed:
-    ./client.sh tueisec-sigltv 20042
+    ./client.sh sigltv 20042
 
 Possible issues:
 * bash: ./client: Permission denied
