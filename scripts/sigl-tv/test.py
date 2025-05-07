@@ -29,7 +29,7 @@ from smartcard.CardConnection import CardConnection
 from smartcard.CardRequest import CardRequest
 from smartcard.util import toHexString, toBytes, toASCIIString, bs2hl
 ## Import an AES algorithm for checking the results:
-import Crypto.Cipher.AES
+import Cryptodome.Cipher.AES
 
 ## Here, we define the card type which we want to
 ## listen to:
@@ -79,7 +79,7 @@ print ('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
 ## If we want to check if an assumed key is correct, we calculate the
 ## result for this assumed key and print it:
 ASSUMED_KEY = [100, 185,  74,  68,  32,  30,  71, 168, 121, 221,  77,  16,   1,  73,  59,  64] # key group 1
-aes_device = Crypto.Cipher.AES.new( bytes(ASSUMED_KEY) , Crypto.Cipher.AES.MODE_ECB )
+aes_device = Cryptodome.Cipher.AES.new( bytes(ASSUMED_KEY) , Cryptodome.Cipher.AES.MODE_ECB )
 response = aes_device.decrypt( bytes(DATA) )
 print ('assumed:  ', list(response))
 ## That's it.

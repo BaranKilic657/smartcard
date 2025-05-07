@@ -1,14 +1,14 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 
-import Crypto.Cipher.AES
+import Cryptodome.Cipher.AES
 import sys
 from smartcard.util import toHexString, toBytes, toASCIIString, bs2hl, hl2bs
 import random
 
 ## This key is stored in the SmartCard:
 masterKey=[100, 185,  74,  68,  32,  30,  71, 168, 121, 221,  77,  16,   1,  73,  59,  64] # key group 1
-masterCrypt=Crypto.Cipher.AES.new( bytes( masterKey ), Crypto.Cipher.AES.MODE_ECB )
+masterCrypt=Cryptodome.Cipher.AES.new( bytes( masterKey ), Cryptodome.Cipher.AES.MODE_ECB )
 ## Amount of stream data to be encoded with the same key:
 blocksize=1024*128
 preamble="SEC-"*16
@@ -30,7 +30,7 @@ while 1:
   theKey=generateNewKey()
   theEncryptedKey=masterCrypt.encrypt( bytes(theKey) )
   ## Generate a new encrypting engine:
-  streamCrypt = Crypto.Cipher.AES.new( bytes(theKey), Crypto.Cipher.AES.MODE_ECB )
+  streamCrypt = Cryptodome.Cipher.AES.new( bytes(theKey), Cryptodome.Cipher.AES.MODE_ECB )
   ## Read 128kB of data from stdin:
   indata = b""
   indata = sys.stdin.buffer.read( blocksize )

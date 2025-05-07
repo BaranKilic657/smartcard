@@ -6,7 +6,7 @@ from smartcard.ATR import ATR
 from smartcard.CardConnection import CardConnection
 from smartcard.CardRequest import CardRequest
 from smartcard.util import toHexString, toBytes, toASCIIString, bs2hl, hl2bs
-import Crypto.Cipher.AES
+import Cryptodome.Cipher.AES
 import sys
 
 
@@ -54,7 +54,7 @@ def processChunk( chunk ):
   newKey = b""
   newKey = decryptKey( encKey )
   sys.stderr.write( "New key: " + toHexString( list( newKey ) ) + "\n")
-  decryptEngine = Crypto.Cipher.AES.new( newKey, Crypto.Cipher.AES.MODE_ECB )
+  decryptEngine = Cryptodome.Cipher.AES.new( newKey, Cryptodome.Cipher.AES.MODE_ECB )
   decryptData = b""
   decryptData = decryptEngine.decrypt( encData )
   sys.stdout.buffer.write( decryptData )

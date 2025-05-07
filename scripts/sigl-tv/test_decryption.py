@@ -7,7 +7,6 @@
 
 import os
 import sys
-import hjson
 import binascii
 
 from time import sleep
@@ -16,7 +15,7 @@ from smartcard.ATR import ATR
 from smartcard.CardConnection import CardConnection
 from smartcard.CardRequest import CardRequest
 from smartcard.util import toHexString, toBytes, toASCIIString, bs2hl
-import Crypto.Cipher.AES
+import Cryptodome.Cipher.AES
 
 key_ascii = "00 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF"
 print(f"Reference Key: {key_ascii}\n")
@@ -69,7 +68,7 @@ print ('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
 print("")
 
 # Calculate the expected result for the selected key
-aes_device = Crypto.Cipher.AES.new(key, Crypto.Cipher.AES.MODE_ECB)
+aes_device = Cryptodome.Cipher.AES.new(key, Cryptodome.Cipher.AES.MODE_ECB)
 expected_response = aes_device.decrypt(sample_data)
 
 expected_response_ascii = " ".join("{:02x}".format(d) for d in expected_response)

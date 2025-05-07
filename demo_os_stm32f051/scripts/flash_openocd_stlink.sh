@@ -3,7 +3,7 @@
 # Find path where this script resides
 cd "$(dirname $0)"
 
-#make -C ..
+make -C ..
 
 if [ $? == 0 ]; then
     openocd -f "interface/stlink.cfg" -f "target/stm32f0x.cfg" -c "adapter speed 8000" \
