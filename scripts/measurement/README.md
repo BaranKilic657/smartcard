@@ -29,14 +29,20 @@ To plot the first measured trace adjust the trace filename path in load_traces.p
     python3 plot_trace.py
 
     Contains the measuring scripts.
-  
+
     trace_measurement_picosdk.py
         Measuring script that records the traces of your AES.
         Please modify the settings in the configuration settings of the main
         function to match the length of you AES encryption.
-    
+
     load_traces.py
         Loads a .h5 file.
-    
+
     plot_trace.py
         Plots the first recorded trace inside the .h5 trace file.
+
+    trace_measurement_picosdk.py
+        For a large number of traces, multiple .h5 files need to be recorded and
+        merged later in your attack scripts. If you have the feeling you have
+        too much RAM, you can also directly record these into numpy arrays.
+
