@@ -1,0 +1,5 @@
+{
+    "cortex-debug.liveWatchRefreshRate": 500,
+    "cortex-debug.armToolchainPrefix": "arm-none-eabi",
+    "cortex-debug.variableUseNaturalFormat": false,
+}

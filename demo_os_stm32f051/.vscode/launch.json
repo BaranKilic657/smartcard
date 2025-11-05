@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex Debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "./demo_os_smartcard.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "external",
+            "gdbTarget": "localhost:3333",
+            "overrideLaunchCommands": [ "monitor reset halt" ],
+            "postLaunchCommands": [ "source scripts/gdb_commands_dbg" ],
+            "gdbPath": "gdb-multiarch",
+            "toolchainPrefix": "arm-none-eabi",
+            "objdumpPath": "arm-none-eabi-objdump",
+            "svdFile": "${workspaceFolder}/.vscode/STM32F0x1.svd",
+            "preLaunchTask": "make"
+        }
+    ]
+}

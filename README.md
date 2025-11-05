@@ -1,9 +1,9 @@
 # Welcome to the Smart Card Laboratory!
 
 ## Resources for the Lab
-* For all documentation, such as the lab script, datasheets, reference manuals, reference implementations, please
-  visit the course's moodle page.
-* A template for the benchmark results can be found here: [here](./templates/lab_report_template.md)
+
+For all documentation, such as the lab script, datasheets, reference manuals, reference implementations, please
+visit the course's moodle page. Large PDFs and powerpoint slides are not destined to live in git repositories.
 
 ## Useful (external) resources
 
@@ -49,12 +49,23 @@ Lastly, you can use the Makefile in `demo_os_stm32f051` to build the demo progra
 For flashing use either one of the flash scripts in the `scripts` directory.
 
 **Important Notice:**  
-If you are working on the student lab PCs, you should not use the system's openocd version,
-but the one provided by the SEC nas. In order to enable this config, execute the following
-on every fresh terminal you want to use openOCD on.
+If you experience problems debugging on the student lab PCs, you can try using a different openocd version,
+provided by the SEC nas. In order to enable this config, execute the following
+on every fresh terminal you want to use openOCD on. This should not be necessary on new Ubuntu 24.04 machines.
 
 ```
 module use /nas/ei/share/sec/tools/modulefiles
 module load openocd/latest
 ```
+
+### Developing with VSCode
+
+If you prefer a graphical IDE, you can use the preinstalled Visual Studio Code together with the C/C++
+and Cortex Debug extension. The required files are included already, but may require additional tweaking.
+To debug using the current configuration, the openocd debug server must run in the background for GDB to
+attach to.
+
+
+
+
 
