@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
 
 # T. Music 05/2023
 
@@ -15,9 +15,10 @@ from smartcard.ATR import ATR
 from smartcard.CardConnection import CardConnection
 from smartcard.CardRequest import CardRequest
 from smartcard.util import toHexString, toBytes, toASCIIString, bs2hl
-import Cryptodome.Cipher.AES
+import Crypto.Cipher.AES
 
 key_ascii = "00 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF"
+
 print(f"Reference Key: {key_ascii}\n")
 
 try:
@@ -31,20 +32,22 @@ except Exception as ex:
     print("Error parsing key -> please fix")
     exit(1)
 
-cardtype = ATRCardType( toBytes( "3B 90 11 00" ) )
-atr = ATR( toBytes( "3B 90 11 00" ) )
-if not atr.isT0Supported():
-  print ("Error: Card does not support T0 protocol.")
-
-cardrequest = CardRequest( timeout=5, cardType=cardtype )
+cardrequest = CardRequest(timeout=5)
 
 ## Wait for the card to be present:
 ## In case the card is in the reader, this command will return immediately.
 print("Waiting for card....")
 cardservice = cardrequest.waitforcard()
 
-cardservice.connection.connect( CardConnection.T0_protocol )
+cardservice.connection.connect()
+atr = ATR(cardservice.connection.getATR())
+
+print(f"ATR: {atr}")
 print("Connected to card with T0 protocol")
+if not atr.isT0Supported():
+    raise Exception("Error: Card does not support T0 protocol.")
+
+sleep(0.5)
 
 sample_data      = os.urandom(16)
 cmd_decrypt_key  = [0x88, 0x10, 0, 0, len(sample_data)] + list(sample_data)
@@ -53,7 +56,7 @@ cmd_get_response = [0x88, 0xc0, 0x00, 0x00, 0x10]
 sample_data_ascii = " ".join("{:02x}".format(d) for d in sample_data)
 
 print(f"Sample Data to decrypt: {sample_data_ascii}\n")
-
+sleep(0.1)
 print ('sending ' + toHexString(cmd_decrypt_key))
 response, sw1, sw2 = cardservice.connection.transmit(cmd_decrypt_key)
 print ('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
@@ -68,7 +71,7 @@ print ('response: ', response, ' status words: ', "%x %x" % (sw1, sw2))
 print("")
 
 # Calculate the expected result for the selected key
-aes_device = Cryptodome.Cipher.AES.new(key, Cryptodome.Cipher.AES.MODE_ECB)
+aes_device = Crypto.Cipher.AES.new(key, Crypto.Cipher.AES.MODE_ECB)
 expected_response = aes_device.decrypt(sample_data)
 
 expected_response_ascii = " ".join("{:02x}".format(d) for d in expected_response)

@@ -65,6 +65,17 @@ and Cortex Debug extension. The required files are included already, but may req
 To debug using the current configuration, the openocd debug server must run in the background for GDB to
 attach to.
 
+### Running the Python Scripts
+
+It is recommended to install uv, lightweight python package manager. You can do this locally by executing the
+following script on the terminal; for more information please see https://docs.astral.sh/uv/getting-started/installation
+
+```
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+
+
 
 
 

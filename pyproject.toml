@@ -1,0 +1,15 @@
+[project]
+name = "smartcard-lab"
+version = "0.1.0"
+description = "Smartcard Lab Student Project Folder"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "pycrypto>=2.6.1",
+    "pyscard>=2.3.1",
+    "websockets>=16.0",
+]
+
+# If your NAS storage is very full
+# [tool.uv]
+# cache-dir = ".uv_cache"

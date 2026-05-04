@@ -1,0 +1,15 @@
+
+# Ignore all python cache related files
+*.pyc
+.uv_cache
+.venv
+uv.lock
+
+demo_os_stm32f051/build/*
+demo_os_stm32f051/*.elf
+demo_os_stm32f051/*.bin
+demo_os_stm32f051/*.map
+demo_os_stm32f051/*.lst
+
+
+
