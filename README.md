@@ -74,9 +74,12 @@ following script on the terminal; for more information please see https://docs.a
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
+### Your first Lab Challenge: Getting online with the Smartcard Bridge
 
+After installing `uv`, pull your projects dependencies by executing `uv sync` in this folder.
+Afterwards start the bridge script in `/scripts/bridge/bridge.py`. The bridge connects the smartcard
+website to the card reader. Whenever you need to upload new application firmware to your reference card,
+make sure to have it running.
 
-
-
-
+The solution to the first challenge is `Ich bin smarter als die smarte Karte!`.
 
