@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
 
 # The output is a hdf5 file with three datasets (plaintext, ciphertext and traces)
 # Each value of plain- and ciphertext is stored as a np.uint8-value
@@ -13,6 +13,9 @@ import random
 import h5py
 import numpy as np
 import logging
+from smartcard.ATR import ATR
+from smartcard.util import toHexString
+from smartcard.System import readers
 from smartcard.CardService import CardService
 from smartcard.util import toBytes
 from smartcard.CardType import ATRCardType
@@ -26,21 +29,6 @@ import ctypes
 # configuration start
 n_traces  = 200    # number of traces to capture
 n_samples = 62500  # number of samples per trace (before falling trigger edge)
-
-
-# Protection Mode encoded in P1 field
-# Select between:
-# REFERENCE             :
-# DUMMYOPS              :
-# SHUFFLE_BIASED        :
-# SHUFFLE               :
-# SHUFFLE_DUMMYOPS      :
-# MASK                  :
-# MASK_BIASED           :
-# MASK_DUMMYOPS         :
-# MASK_SHUFFLE_DUMMYOPS :
-# UNPROTECTED           :
-protect_mode = "REFERENCE"
 
 # sample_rate = "F_125_MHZ"  # sample rate [S/sec]
 sample_rate = "F_250_MHZ"  # sample rate [S/sec]
@@ -129,47 +117,41 @@ def progressbar(iterable, prefix="", size=100):
 class SmartCard:
     def connect(self):
         # detect the smart card based on the content of the ATR (card-centric approach)
-        protect_mode_dict = {
-            "REFERENCE": 0,
-            "DUMMYOPS": 1,
-            "SHUFFLE_BIASED": 2,
-            "SHUFFLE": 3,
-            "SHUFFLE_DUMMYOPS": 4,
-            "MASK": 5,
-            "MASK_BIASED": 6,
-            "MASK_DUMMYOPS": 7,
-            "MASK_SHUFFLE_DUMMYOPS": 8,
-            "UNPROTECTED": 9,
-        }
-        self.countermeasure = protect_mode_dict[protect_mode]
-
         logger.info("Initializing card connection...")
         try:
-            cardtype = ATRCardType(toBytes("3B 90 11 00"))
-            cardrequest = CardRequest(cardType=cardtype)
-            self.cardservice = cardrequest.waitforcard()
+            r = readers()
+            if not r:
+                print("No readers found")
+                return False
+
+            # Cardrequest returns a cardservice
+            self.cs = CardRequest(readers=r, timeout=5).waitforcard()
+            self.connection = self.cs.connection
+            self.connection.connect()
+            atr = ATR(self.connection.getATR())
+            print(f"Connected, ATR: {atr}")
+            if not atr.isT0Supported():
+                raise Exception("Error: Card does not support T0 protocol.")
             logger.info("Card connection established correctly")
         except TimeoutError:
             logger.warning("ERROR: Timeout exceeded")
             sys.exit(0)
-        # connect to the card using T0 protocol.
-        self.cardservice.connection.connect(CardConnection.T0_protocol)
 
     def decrypt(self, key):
         # format the command to be sent to the card:
-        DECRYPT_KEY  = [0x88, 0x10, int(self.countermeasure), 0, len(key)] + key
+        DECRYPT_KEY  = [0x88, 0x10, 0, 0, len(key)] + key
         GET_RESPONSE = [0x88, 0xC0, 0x00, 0x00, 0x10]
         # send the commands and retrieve the responses
         # detecting a transmission error
         # signal.alarm(2)
         try:
             time.sleep(0.01)  # this can prevent the transmission error
-            response, sw1, sw2 = self.cardservice.connection.transmit(DECRYPT_KEY)  # This function doesn't terminate sometimes
+            response, sw1, sw2 = self.connection.transmit(DECRYPT_KEY)  # This function doesn't terminate sometimes
         # wait and try again after a transmission error
         except Exception as exc:
             print(exc)
-            response, sw1, sw2 = self.cardservice.connection.transmit(DECRYPT_KEY)
-        response, sw1, sw2 = self.cardservice.connection.transmit(GET_RESPONSE)
+            response, sw1, sw2 = self.connection.transmit(DECRYPT_KEY)
+        response, sw1, sw2 = self.connection.transmit(GET_RESPONSE)
         return response
 
 

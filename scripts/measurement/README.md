@@ -23,12 +23,10 @@ Before running a measurement please adjust the settings in
 `trace_measurement_picosdk.py` to your needs. All constants are defined in `pshelper_picosdk.py`
 
 Then run a measurement by executing:
-    python3 trace_measurement_picosdk.py
+    ./trace_measurement_picosdk.py
 
 To plot the first measured trace adjust the trace filename path in load_traces.py and then run:
-    python3 plot_trace.py
-
-    Contains the measuring scripts.
+    plot_trace.py
 
     trace_measurement_picosdk.py
         Measuring script that records the traces of your AES.
