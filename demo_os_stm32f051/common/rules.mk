@@ -110,7 +110,7 @@ LDLIBS += -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 %: s.%
 %: SCCS/s.%
 
-all: $(PROJECT).elf $(PROJECT).bin
+all: $(PROJECT).elf $(PROJECT).bin $(PROJECT).app
 app: $(PROJECT).app
 flash: $(PROJECT).flash
 
