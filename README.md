@@ -48,15 +48,16 @@ $ make TARGETS=stm32/f0
 Lastly, you can use the Makefile in `demo_os_stm32f051` to build the demo program.
 For flashing use either one of the flash scripts in the `scripts` directory.
 
-**Important Notice:**  
-If you experience problems debugging on the student lab PCs, you can try using a different openocd version,
-provided by the SEC nas. In order to enable this config, execute the following
-on every fresh terminal you want to use openOCD on. This should not be necessary on new Ubuntu 24.04 machines.
+By default `make` will compile your implementation to run standalone on your development card.
+At a later point in the lab, you will give your peers the chance to attack your own implementations.
+In order to do that, you will upload an app binary, which can be flashed onto reference cards. To build it,
+simply enter `make app` in the os folder.
 
-```
-module use /nas/ei/share/sec/tools/modulefiles
-module load openocd/latest
-```
+When working on your implementation, please put your desired aes key into the predefined variable in `keys.c`
+and use the `get_application_aes_key()` function from `keys.h` to load it. As long as you are working on
+your student card, you'll get the key you entered in `keys.c`. When competing against other teams, the web
+portal will inject a newly generated key into your application binary, superseding the key from `keys.c`.
+Thus, it is **important** to not use your own way to load the key!
 
 ### Developing with VSCode
 
