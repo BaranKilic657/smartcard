@@ -18,6 +18,7 @@
 #include <libopencm3/stm32/usart.h>
 
 #include "sc_system.h"
+#include "keys.h"
 
 int main(void) {
 
@@ -28,15 +29,19 @@ int main(void) {
     sys_set_clksource(SYSTEM_CLKSOURCE_EXT_8MHZ);
     sys_set_reset_source(SYSTEM_RSTSRC_DBG_ONLY);
 
+    // The higher the first byte of the AES key,
+    // the slower it blinks
+    uint32_t blink_speed = (get_application_aes_key()[0] * 10000) + 200000;
+
      while(1) {
         gpio_clear(PORT_LED_R, PIN_LED_R);
-        delay_cyc(1000000);
+        delay_cyc(blink_speed);
         gpio_set(PORT_LED_R, PIN_LED_R);
         gpio_clear(PORT_LED_G, PIN_LED_G);
-        delay_cyc(1000000);
+        delay_cyc(blink_speed);
         gpio_set(PORT_LED_G, PIN_LED_G);
         gpio_clear(PORT_LED_B, PIN_LED_B);
-        delay_cyc(1000000);
+        delay_cyc(blink_speed);
         gpio_set(PORT_LED_B, PIN_LED_B);
     }
 

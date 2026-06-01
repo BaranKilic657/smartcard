@@ -22,23 +22,22 @@ BUILD_DIR    = build
 PROJECT      = demo_os_smartcard
 SMARTCARD_HW = SMARTCARD_HW_V3
 
-CFILES     = src/main.c src/sc_system.c
+CFILES     = src/main.c src/sc_system.c src/keys.c
 SHARED_DIR = include/
 VPATH     += $(SHARED_DIR)
 INCLUDES  += $(patsubst %, -I%, . $(SHARED_DIR))
 OPT        = -Og
 CSTD       = -std=c99
 
-DEVICE       = stm32f051k8b6
-# LDSCRIPT   = stm32f051k8b6 use device OR ldscript
+# DEVICE     = stm32f051k8b6
+LDSCRIPT_APP = common/app.stm32f051k8b6.ld
+LDSCRIPT     = common/standalone.stm32f051k8b6.ld
 OPENCM3_LIB  = opencm3_stm32f0
 OPENCM3_DEFS = -DSTM32F0 -D$(SMARTCARD_HW)
-ARCH_FLAGS   =
 FP_FLAGS     = -msoft-float
-ARCH_FLAGS   = -mthumb -mcpu=cortex-m3 $(FP_FLAGS)
+ARCH_FLAGS   = -mthumb -mcpu=cortex-m0 $(FP_FLAGS)
 
-include $(OPENCM3_DIR)/mk/genlink-config.mk
-include rules.mk
-include $(OPENCM3_DIR)/mk/genlink-rules.mk
-
+# include $(OPENCM3_DIR)/mk/genlink-config.mk
+include common/rules.mk
+# include $(OPENCM3_DIR)/mk/genlink-rules.mk
 

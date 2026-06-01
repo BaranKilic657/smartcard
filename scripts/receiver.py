@@ -11,7 +11,7 @@ from smartcard.CardConnection import CardConnection
 from smartcard.CardRequest import CardRequest
 from smartcard.util import toHexString, toBytes, toASCIIString, bs2hl
 
-URL = "http://localhost:5000/stream"
+URL = "https://sigltv.sec.ei.tum.de/stream"
 start = 0
 CHUNK_SIZE = 1024 * 1024  # 1 MB
 
@@ -61,7 +61,7 @@ for i in range(3):
             raise Exception("Error: Card does not support T0 protocol.")
 
         # Fetch empty chunk to get test vectors
-        response = fetch_chunk(0, 0)
+        response = fetch_chunk(0, 15)
         tv_enc   = bytes.fromhex(response.headers.get("TestVectorEnc", None))
         tv_plain = bytes.fromhex(response.headers.get("TestVectorPlain", None))
         print("First frame: verifying key using test vectors from response")

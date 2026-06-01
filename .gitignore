@@ -6,6 +6,7 @@
 uv.lock
 
 demo_os_stm32f051/build/*
+demo_os_stm32f051/*.app
 demo_os_stm32f051/*.elf
 demo_os_stm32f051/*.bin
 demo_os_stm32f051/*.map

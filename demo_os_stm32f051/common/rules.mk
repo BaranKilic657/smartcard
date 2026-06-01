@@ -37,7 +37,7 @@ CSTD ?= -std=c99
 
 # Be silent per default, but 'make V=1' will show all compiler calls.
 # If you're insane, V=99 will print out all sorts of things.
-V?=0
+V?=1
 ifeq ($(V),0)
 Q	:= @
 NULL	:= 2>/dev/null
@@ -60,7 +60,7 @@ INCLUDES += $(patsubst %,-I%, . $(OPENCM3_INC) )
 OBJS = $(CFILES:%.c=$(BUILD_DIR)/%.o)
 OBJS += $(CXXFILES:%.cxx=$(BUILD_DIR)/%.o)
 OBJS += $(AFILES:%.S=$(BUILD_DIR)/%.o)
-GENERATED_BINS = $(PROJECT).elf $(PROJECT).bin $(PROJECT).map $(PROJECT).list $(PROJECT).lss
+GENERATED_BINS = $(PROJECT).elf $(PROJECT).bin $(PROJECT).map $(PROJECT).list $(PROJECT).lss $(PROJECT).app.elf $(PROJECT).app
 
 TGT_CPPFLAGS += -MD
 TGT_CPPFLAGS += -Wall -Wundef $(INCLUDES)
@@ -81,12 +81,12 @@ TGT_CXXFLAGS += -Wextra -Wshadow -Wredundant-decls  -Weffc++
 
 TGT_ASFLAGS += $(OPT) $(ARCH_FLAGS) -ggdb3
 
-TGT_LDFLAGS += -T$(LDSCRIPT) -L$(OPENCM3_DIR)/lib -nostartfiles
+TGT_LDFLAGS += -L$(OPENCM3_DIR)/lib -nostartfiles
 TGT_LDFLAGS += $(ARCH_FLAGS)
 TGT_LDFLAGS += -specs=nano.specs
 TGT_LDFLAGS += -Wl,--gc-sections
 # OPTIONAL
-#TGT_LDFLAGS += -Wl,-Map=$(PROJECT).map
+TGT_LDFLAGS += -Wl,-Map=$(PROJECT).map
 ifeq ($(V),99)
 TGT_LDFLAGS += -Wl,--print-gc-sections
 endif
@@ -111,6 +111,7 @@ LDLIBS += -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 %: SCCS/s.%
 
 all: $(PROJECT).elf $(PROJECT).bin
+app: $(PROJECT).app
 flash: $(PROJECT).flash
 
 # error if not using linker script generator
@@ -140,9 +141,17 @@ $(BUILD_DIR)/%.o: %.S
 	@mkdir -p $(dir $@)
 	$(Q)$(CC) $(TGT_ASFLAGS) $(ASFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $@ -c $<
 
-$(PROJECT).elf: $(OBJS) $(LDSCRIPT) $(LIBDEPS)
+$(PROJECT).elf: $(OBJS) $(LIBDEPS)
 	@printf "  LD\t$@\n"
-	$(Q)$(LD) $(TGT_LDFLAGS) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $@
+	$(Q)$(LD) -T$(LDSCRIPT)  $(TGT_LDFLAGS) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $@
+
+$(PROJECT).app.elf: $(OBJS) $(LIBDEPS)
+	@printf "  LD\t$@\n"
+	$(Q)$(LD) -T$(LDSCRIPT_APP) $(TGT_LDFLAGS) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $@
+
+%.app: %.app.elf
+	@printf "  OBJCOPY\t$@\n"
+	$(Q)$(OBJCOPY) -O binary  $< $@
 
 %.bin: %.elf
 	@printf "  OBJCOPY\t$@\n"
@@ -172,6 +181,6 @@ endif
 clean:
 	rm -rf $(BUILD_DIR) $(GENERATED_BINS)
 
-.PHONY: all clean flash
+.PHONY: all app clean flash
 -include $(OBJS:.o=.d)
 
