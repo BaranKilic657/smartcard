@@ -13,6 +13,7 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/usart.h>
+#include <libopencm3/cm3/systick.h>
 
 #include "sc_system.h"
 
@@ -162,5 +163,29 @@ void delay_cyc(uint32_t cycles) {
         cycles--;
         __asm__("nop");
     }
+}
+
+// Systick Interrupt Handler
+void sys_tick_handler(void) {
+    static uint8_t i = 0;
+    if (i == 0) {
+        gpio_clear(PORT_LED_G, PIN_LED_G);
+        i++;
+    } else {
+        i=0;
+        gpio_set(PORT_LED_G, PIN_LED_G);
+    }
+}
+
+// In case you wish to use the systick:
+void systick_setup(int xms) {
+    /* div8 per ST, stays compatible with M3/M4 parts, well done ST */
+    systick_set_clocksource(STK_CSR_CLKSOURCE_EXT);
+    /* clear counter so it starts right away */
+    STK_CVR = 0;
+
+    systick_set_reload(8000000UL / 8 / 1000 * xms);
+    systick_counter_enable();
+    systick_interrupt_enable();
 }
 

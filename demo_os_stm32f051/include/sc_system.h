@@ -64,4 +64,6 @@ void sys_set_reset_source(uint8_t src);
 
 void delay_cyc(uint32_t cycles);
 
+void systick_setup(int xms);
+
 #endif

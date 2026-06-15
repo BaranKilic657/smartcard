@@ -23,6 +23,11 @@
 int main(void) {
 
     sys_rcc_init();
+    // Initialize the systick interrupt with 200 ms tick interval.
+    // Unless you wish to use it, I recommend disabling this.
+    // It is used to check the correct function of the demo app.
+    systick_setup(200);
+
     // Init the GPIOs so we can config
     // the clock source and ISO7816 reset behavior
     sys_gpio_init();
@@ -37,9 +42,6 @@ int main(void) {
         gpio_clear(PORT_LED_R, PIN_LED_R);
         delay_cyc(blink_speed);
         gpio_set(PORT_LED_R, PIN_LED_R);
-        gpio_clear(PORT_LED_G, PIN_LED_G);
-        delay_cyc(blink_speed);
-        gpio_set(PORT_LED_G, PIN_LED_G);
         gpio_clear(PORT_LED_B, PIN_LED_B);
         delay_cyc(blink_speed);
         gpio_set(PORT_LED_B, PIN_LED_B);
