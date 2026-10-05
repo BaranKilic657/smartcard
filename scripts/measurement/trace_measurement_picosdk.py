@@ -4,26 +4,26 @@
 # Each value of plain- and ciphertext is stored as a np.uint8-value
 # Each value of the trace is stored as a np.int16-value
 
-from functools import partial
-import time
-import signal
-import sys
+import ctypes
+import logging
 import os
 import random
+import signal
+import sys
+import time
+from functools import partial
+
 import h5py
 import numpy as np
-import logging
+from picosdk.functions import adc2mV, assert_pico_ok, mV2adc
+from picosdk.ps5000 import ps5000 as ps
 from smartcard.ATR import ATR
-from smartcard.util import toHexString
-from smartcard.System import readers
-from smartcard.CardService import CardService
-from smartcard.util import toBytes
-from smartcard.CardType import ATRCardType
 from smartcard.CardConnection import CardConnection
 from smartcard.CardRequest import CardRequest
-from picosdk.ps5000 import ps5000 as ps
-from picosdk.functions import adc2mV, assert_pico_ok, mV2adc
-import ctypes
+from smartcard.CardService import CardService
+from smartcard.CardType import ATRCardType
+from smartcard.System import readers
+from smartcard.util import toBytes, toHexString
 
 ###################################################################################################
 # configuration start

@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run --script
 
-import matplotlib.pyplot as plt  # Add support for drawing figures
 import load_traces  # Loads traces
+import matplotlib.pyplot as plt  # Add support for drawing figures
 
 # LOAD DATA AND TRACES
 # open input file (path defined in load_traces)

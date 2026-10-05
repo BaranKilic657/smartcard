@@ -5,17 +5,15 @@
 # This script attempts to perform a decryption with random ciphertexts and checks
 # whether the card works correctly.
 
+import binascii
 import os
 import sys
-import binascii
-
 from time import sleep
-from smartcard.CardType import ATRCardType
-from smartcard.ATR import ATR
-from smartcard.CardConnection import CardConnection
-from smartcard.CardRequest import CardRequest
-from smartcard.util import toHexString, toBytes, toASCIIString, bs2hl
+
 import Crypto.Cipher.AES
+from smartcard.ATR import ATR
+from smartcard.CardRequest import CardRequest
+from smartcard.util import toHexString
 
 key_ascii = "00 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF"
 

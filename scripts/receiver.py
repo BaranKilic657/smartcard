@@ -1,15 +1,16 @@
 #!/usr/bin/env -S uv run --script
 
-import sys
-import requests
 import subprocess
+import sys
 from time import sleep
+
+import requests
 from Crypto.Cipher import AES
-from smartcard.CardType import ATRCardType
 from smartcard.ATR import ATR
 from smartcard.CardConnection import CardConnection
 from smartcard.CardRequest import CardRequest
-from smartcard.util import toHexString, toBytes, toASCIIString, bs2hl
+from smartcard.CardType import ATRCardType
+from smartcard.util import bs2hl, toASCIIString, toBytes, toHexString
 
 URL = "https://sigltv.sec.ei.tum.de/stream"
 start = 0

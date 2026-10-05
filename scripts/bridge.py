@@ -15,6 +15,7 @@
 import asyncio
 import json
 import time
+
 import websockets
 from smartcard.System import readers
 from smartcard.util import toHexString
