@@ -28,7 +28,6 @@ class SmartCard:
         try:
             r = readers()
             if not r:
-                print("No readers found")
                 raise self.NoReaderError()
 
             # Cardrequest returns a cardservice

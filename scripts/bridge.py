@@ -1,5 +1,11 @@
 #!/usr/bin/env -S uv run --script
 
+# L. Burke, M. Mashhour, T. Music 10/2026
+
+# A helper script to enable communication between the smartcard web portal
+# and attached cards.
+
+
 import asyncio
 import json
 import logging

@@ -12,5 +12,7 @@ demo_os_stm32f051/*.bin
 demo_os_stm32f051/*.map
 demo_os_stm32f051/*.lst
 
-
-
+# Ignore hdf5 files
+*.h5
+*.he5
+*.hdf5

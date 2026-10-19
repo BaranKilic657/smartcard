@@ -1,84 +1,31 @@
 #!/usr/bin/env -S uv run --script
 
-# T. Music 05/2023
+# T. Music, L.Burke 10/2026
 
-# This script attempts to perform a decryption with random ciphertexts and checks
+# This script attempts to perform a decryption with a random ciphertext and checks
 # whether the card works correctly.
 
-import binascii
-import os
-import sys
-from time import sleep
+import secrets
 
 import Crypto.Cipher.AES
-from smartcard.ATR import ATR
-from smartcard.CardRequest import CardRequest
-from smartcard.util import toHexString
+from aes_smartcard import SmartCard
 
 key_ascii = "00 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF"
+key = bytes.fromhex(key_ascii)
 
-print(f"Reference Key: {key_ascii}\n")
-
-try:
-    key = binascii.unhexlify(key_ascii.replace(" ", ""))
-    if len(key) != 16:
-        print(f"    Error: Key length is {len(key)}, but expected length is 16")
-        sys.exit(1)
-
-except binascii.Error as ex:
-    print(f"Error parsing key: {ex}")
-    sys.exit(1)
-
-cardrequest = CardRequest(timeout=5)
-
-## Wait for the card to be present:
-## In case the card is in the reader, this command will return immediately.
-print("Waiting for card....")
-cardservice = cardrequest.waitforcard()
-assert cardservice is not None
-
-cardservice.connection.connect()
-atr = ATR(cardservice.connection.getATR())
-
-print(f"ATR: {atr}")
-print("Connected to card with T0 protocol")
-if not atr.isT0Supported():
-    raise ConnectionError("Card does not support T0 protocol.")
-
-sleep(0.5)
-
-sample_data = os.urandom(16)
-cmd_decrypt_key = [0x88, 0x10, 0, 0, len(sample_data)] + list(sample_data)
-cmd_get_response = [0x88, 0xC0, 0x00, 0x00, 0x10]
-
-sample_data_ascii = " ".join(f"{d:02x}" for d in sample_data)
-
-print(f"Sample Data to decrypt: {sample_data_ascii}\n")
-sleep(0.1)
-print("sending " + toHexString(cmd_decrypt_key))
-response, sw1, sw2 = cardservice.connection.transmit(cmd_decrypt_key)
-print(f"response: {response}, status words: {sw1:02x} {sw2:02x}")
-## There will be no response here, but the card answers with sw1=0x61, sw2=0x10,
-## indicating that there are 16 (=0x10) bytes to read now.
-
-## Now we fetch the decrypted chunk key using the GET_RESPONSE command:
-print("sending " + toHexString(cmd_get_response))
-response, sw1, sw2 = cardservice.connection.transmit(cmd_get_response)
-print(f"response: {response}, status words: {sw1:02x} {sw2:02x}\n")
-
-# Calculate the expected result for the selected key
+ciphertext = secrets.token_bytes(16)
 aes_device = Crypto.Cipher.AES.new(key, Crypto.Cipher.AES.MODE_ECB)
-expected_response = aes_device.decrypt(sample_data)
+expected_plaintext = aes_device.decrypt(ciphertext)
 
-expected_response_ascii = " ".join(f"{d:02x}" for d in expected_response)
-returned_response_ascii = " ".join(f"{d:02x}" for d in response)
-print(f"Returned plaintext: {returned_response_ascii}")
-print(f"Expected plaintext: {expected_response_ascii}")
+card = SmartCard()
+card.connect()
+card_plaintext = bytes(card.decrypt(list(ciphertext)))
+card.disconnect()
 
-if returned_response_ascii == expected_response_ascii:
-    print("Responses Match :)")
+if card_plaintext == expected_plaintext:
+    print("Responses match.")
+    print(f"Got plaintext: {card_plaintext.hex()}")
 else:
     print("Response MISMATCH. Please check key")
-
-print("\nClosing connection. Bye.")
-cardservice.connection.disconnect()
+    print(f"Expected plaintext: {expected_plaintext.hex()}")
+    print(f"     Got plaintext: {card_plaintext.hex()}")
