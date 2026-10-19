@@ -13,7 +13,9 @@ new firmware.
 
 ## Measurement
 
-See the dedicated readme in the measurement folder.
+A basic example for how to capture traces using the provided card readers and
+picoscopes is provided in `measure_traces.py`. The default parameters are
+intended as a starting point.
 
 ## SiglTV
 
@@ -36,8 +38,16 @@ The python script `test_decryption.py` can be used to trigger a single decryptio
 card in order to ensure proper functioning of the interface. It can also be used
 to test the AES implementation on the card by comparing the result with a
 decryption performed with the key given in the file.
-In order to run it, execute:
 
-```
-./test_decryption.py
-```
+## Test Timing
+
+To check if your card obeys the timing restrictions `test_timing.py` is available.
+
+
+### Install requirements for measurement scripts
+
+Install Picoscope drivers from https://www.picotech.com/downloads/linux:
+   - `sudo bash -c 'echo "deb https://labs.picotech.com/debian/ picoscope main" >/etc/apt/sources.list.d/picoscope.list'`
+   - `wget -O - https://labs.picotech.com/debian/dists/picoscope/Release.gpg.key | sudo apt-key add -`
+   - `sudo apt-get update`
+   - `sudo apt-get install picoscope`
