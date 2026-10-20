@@ -87,7 +87,7 @@ try:
 
         kek = bytes(card.decrypt(list(kek_enc)))
         nonce = bytes.fromhex(hex_nonce)
-        aes_device = Crypto.Cipher.AES.new(kek, Crypto.Cipher.AES.MODE_CTR, nonce)
+        aes_device = Crypto.Cipher.AES.new(kek, Crypto.Cipher.AES.MODE_CTR, nonce=nonce)
         decrypted = aes_device.decrypt(data)
 
         assert vlc.stdin is not None
