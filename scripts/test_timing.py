@@ -45,20 +45,28 @@ while (time.monotonic() - start) < capture_time_s:
 
 scope.capture([CHANNEL.B])
 signal = scope.get_data(CHANNEL.B)
-aes_times, comm_times = compute_timings(signal, sample_rate)
+t_aes, t_comms = compute_timings(signal, sample_rate)
 
-print(
-    f"          AES performance: {np.mean(aes_times) * 1000:6.2f} mean, {np.max(aes_times) * 1000:6.2f} max"
-)
-print(
-    f"Communication performance: {np.mean(comm_times) * 1000:6.2f} mean, {np.max(comm_times) * 1000:6.2f} max"
-)
-print(len(aes_times))
-print(len(comm_times))
+timing_ok = True
+
 for idx in range(len(ct_list)):
     if aes_device.decrypt(bytes(ct_list[idx])) != bytes(pt_list[idx]):
         print("AES ERROR")
+        timing_ok = False
         break
+
+if max(len(t_aes), len(t_comms)) > len(ct_list):
+    timing_ok = False
+    print("Timing invalid, more triggers than completed decryptions")
+
+if timing_ok:
+    print(
+        f"     AES: {np.mean(t_aes) * 1000:6.2f} mean, {np.max(t_aes) * 1000:6.2f} max"
+    )
+    print(
+        f"Overhead: {np.mean(t_comms) * 1000:6.2f} mean, {np.max(t_comms) * 1000:6.2f} max"
+    )
+
 
 card.disconnect()
 scope.close()
