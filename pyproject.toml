@@ -5,12 +5,14 @@ description = "Smartcard Lab Student Project Folder"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "h5py>=3.16.0",
+    "numpy>=2.5.4",
     "picosdk>=1.1",
-    "pycryptodome>=3.23.0",
-    "pyscard>=2.3.1",
+    "pycryptodome>=4.2.0",
+    "pyscard>=2.3.2",
     "requests>=2.34.2",
-    "websockets>=16.0",
+    "tables>=3.11.1",
+    "tqdm>=4.70.1",
+    "websockets>=17.4",
 ]
 
 # If your NAS storage is very full
