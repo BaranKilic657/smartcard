@@ -17,6 +17,9 @@ A basic example for how to capture traces using the provided card readers and
 picoscopes is provided in `measure_traces.py`. The default parameters are
 intended as a starting point.
 
+Connect the cards left SMB connector (J3, signal output) to CH A of the picoscope
+and the right SMB connector (J4, trigger output) to CH B.
+
 ## SiglTV
 
 One of the challenges will be to clone your reference card in order to watch
@@ -29,15 +32,17 @@ on the web portal.
 
 Launch the script on the terminal as such: `./receiver.py <team-code>`.
 
-Please note that the reference card will _not_ work for SiglTV, as to prove
-you have successfully cloned the card, you have to invert your secret key.
+Please note that to access SiglTV you first have to create your own
+smartcard firmware as well as perform a successful DPA attack.
+To prove this, provide your smartcard with a specific secret key,
+derived by inverting each bit of the reference implementations key.
 
 ## Test Decryption
 
 The python script `test_decryption.py` can be used to trigger a single decryption on the
 card in order to ensure proper functioning of the interface. It can also be used
 to test the AES implementation on the card by comparing the result with a
-decryption performed with the key given in the file.
+decryption performed with the provided key.
 
 ## Test Timing
 

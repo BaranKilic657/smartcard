@@ -2,8 +2,8 @@
 
 # L.Burke 10/2026
 
-# This script attempts to perform a decryption with a random ciphertext and checks
-# whether the card works correctly.
+# This script attempts to perform decryptions with random ciphertext and checks
+# whether the card is fast enough.
 
 import secrets
 import time
@@ -58,6 +58,9 @@ for idx in range(len(ct_list)):
 if max(len(t_aes), len(t_comms)) > len(ct_list):
     timing_ok = False
     print("Timing invalid, more triggers than completed decryptions")
+
+if max(t_aes) > 0.016 or np.mean(t_aes) > 0.015 or np.mean(t_comms) > 0.06:
+    timing_ok = False
 
 if timing_ok:
     print(
