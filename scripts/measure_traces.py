@@ -12,12 +12,12 @@ from utils import ColorFormatter, H5File
 
 # consider enabling compression and reducing chunksize for creating very large datasets
 # https://docs.h5py.org/en/stable/high/dataset.html
-n_traces = 100  # number of traces to capture
+n_traces = 200  # number of traces to capture
 n_samples = 62500  # number of samples per trace (before falling trigger edge)
 sample_rate = 250e6  # oscilloscope sample rate [S/sec]
 
 
-filename = "example.h5"  # output file name
+filename = "example_1000.h5"  # output file name
 out_file = f"./traces/{filename}"
 overwrite_file = False
 
