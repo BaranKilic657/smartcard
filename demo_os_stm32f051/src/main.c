@@ -23,28 +23,26 @@
 int main(void) {
 
     sys_rcc_init();
-    // Initialize the systick interrupt with 200 ms tick interval.
-    // Unless you wish to use it, I recommend disabling this.
-    // It is used to check the correct function of the demo app.
-    systick_setup(200);
-
     // Init the GPIOs so we can config
     // the clock source and ISO7816 reset behavior
     sys_gpio_init();
-    sys_set_clksource(SYSTEM_CLKSOURCE_EXT_8MHZ);
-    sys_set_reset_source(SYSTEM_RSTSRC_DBG_ONLY);
+    sys_set_reset_source(SYSTEM_RSTSRC_ISO7816);
+    sys_set_clksource(SYSTEM_CLKSOURCE_CARD_TERMINAL);
+    sys_usart_init();
 
-    // The higher the first byte of the AES key,
-    // the slower it blinks
-    uint32_t blink_speed = (get_application_aes_key()[0] * 10000) + 200000;
+    // RST is active low and wired to the MCU reset through the board's
+    // reset gate. Execution resumes here after the reader releases RST.
+    // Wait at least 400 reader-clock cycles before starting the ATR.
+    for (volatile uint32_t i = 0; i < 400; ++i) {
+        __asm__ volatile ("nop");
+    }
+    sys_usart_send_atr();
+    gpio_clear(PORT_LED_G, PIN_LED_G);
 
-     while(1) {
-        gpio_clear(PORT_LED_R, PIN_LED_R);
-        delay_cyc(blink_speed);
-        gpio_set(PORT_LED_R, PIN_LED_R);
-        gpio_clear(PORT_LED_B, PIN_LED_B);
-        delay_cyc(blink_speed);
-        gpio_set(PORT_LED_B, PIN_LED_B);
+    // Each subsequent reader reset restarts main and sends another ATR.
+    // APDU command processing belongs to the next challenge.
+    while (1) {
+        __asm__ volatile ("nop");
     }
 
     // Never reached

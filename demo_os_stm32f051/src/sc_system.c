@@ -139,19 +139,50 @@ void sys_usart_init() {
         for very basics like baudrate and stoppbits.
     */
 
-    /* This is your task :) */
+    rcc_periph_clock_enable(RCC_GPIOA);
+    rcc_periph_clock_enable(RCC_USART1);
+
+    // PA9 / AF1 is USART1_TX on the STM32F051. The shared ISO7816
+    // I/O line must be released high, never driven high push-pull.
+    gpio_mode_setup(PORT_USART1_TX, GPIO_MODE_AF, GPIO_PUPD_NONE, PIN_USART1_TX);
+    gpio_set_output_options(PORT_USART1_TX, GPIO_OTYPE_OD,
+                            GPIO_OSPEED_2MHZ, PIN_USART1_TX);
+    gpio_set_af(PORT_USART1_TX, GPIO_AF1, PIN_USART1_TX);
+
+    usart_disable(USART1);
+    USART_CR1(USART1) = USART_CR1_M | USART_CR1_PCE | USART_CR1_TE;
+    USART_CR2(USART1) = 0;
+    USART_CR3(USART1) = USART_CR3_SCEN;
+    usart_set_stopbits(USART1, USART_STOPBITS_1_5);
+
+    // SYSCLK and USART1 use the reader clock directly. Set the divider
+    // rather than assuming that the reader supplies exactly 8 MHz:
+    // one ETU = 372 reader clock cycles (ATR default Fi=372, Di=1).
+    USART_BRR(USART1) = 372;
+    // Two extra baud periods between characters; CK output is unused.
+    USART_GTPR(USART1) = (2U << 8);
+    usart_enable(USART1);
 
     return;
 }
 
 void sys_usart_send(uint8_t *data, size_t len) {
-    /* This is your task :) */
+    for (size_t i = 0; i < len; ++i) {
+        while (!(USART_ISR(USART1) & USART_ISR_TXE)) {
+        }
+        USART_ICR(USART1) = USART_ICR_TCCF;
+        USART_TDR(USART1) = data[i];
+        while (!(USART_ISR(USART1) & USART_ISR_TC)) {
+        }
+    }
 }
 
 void sys_usart_send_atr() {
 
-    /* This is your task :) */
-    // sys_usart_send(atr, atr_len);
+    // Direct convention, T=0, default interface parameters, no historical
+    // bytes. A T=0-only ATR does not include a checksum (TCK).
+    uint8_t atr[] = {0x3B, 0x00};
+    sys_usart_send(atr, sizeof(atr));
     return;
 }
 
